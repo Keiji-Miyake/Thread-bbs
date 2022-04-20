@@ -95,4 +95,17 @@ class ThreadService
             'thread_id' => $thread_id,
         ];
     }
+
+    /**
+     * Get paginated threads.
+     *
+     * @param integer $per_page
+     * @return Thread $threads
+     */
+    public function getThreads(int $per_page)
+    {
+        $threads = $this->thread_repository->getPaginatedThreads($per_page);
+        $threads->load('user', 'messages.user'); // Eager load。N+1問題回避
+        return $threads;
+    }
 }
