@@ -17,7 +17,7 @@ class CreateThreadsTable extends Migration
             $table->bigIncrements('id');
             $table->unsignedBigInteger('user_id');
             $table->string('name');
-            $table->boolean('is_user_checked');
+            $table->boolean('is_user_checked')->default(false);
             $table->timestamp('latest_comment_time');
             $table->timestamps();
 
