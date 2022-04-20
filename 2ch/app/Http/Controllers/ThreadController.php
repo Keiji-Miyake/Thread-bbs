@@ -4,19 +4,32 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\ThreadRequest;
 use App\Message;
+use App\Services\ThreadService;
 use App\Thread;
 use Carbon\Carbon;
+use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
 class ThreadController extends Controller
 {
     /**
-     * Undocumented function
+     * @var threadService
      */
-    public function __construct()
+    protected $thread_service;
+
+    /**
+     * Create a new controller instance.
+     *
+     * @param ThreadService $thread_service
+     * @return void
+     */
+    public function __construct(
+        ThreadService $thread_service // インジェクション
+    )
     {
         $this->middleware('auth')->except('index'); //ログインしているユーザがstoreメソッドにアクセスできるように
+        $this->thread_service = $thread_service; // プロパティに代入
     }
 
     /**
@@ -47,19 +60,14 @@ class ThreadController extends Controller
      */
     public function store(ThreadRequest $request)
     {
-        // save Thread
-        $thread = new Thread();
-        $thread->name = $request->name;
-        $thread->user_id = Auth::id();
-        $thread->latest_comment_time = Carbon::now();
-        $thread->save();
-
-        // save Message
-        $message = new Message();
-        $message->user_id = Auth::id();
-        $message->thread_id = $thread->id;
-        $message->body = $request->content;
-        $message->save();
+        try {
+            $data = $request->only(
+                ['name', 'content']
+            );
+            $this->thread_service->createNewThread($data, Auth::id()); // new せず $this-> の形で呼び出せる。（インジェクションした為）
+        } catch (Exception $error) {
+            return redirect()->route('threads.index')->with('error', 'スレッドの新規作成に失敗しました。');
+        }
 
         // redirect to index method
         return redirect()->route('threads.index')->with('success', 'スレッドの新規作成が完了しました。');
