@@ -51,6 +51,7 @@ class ThreadController extends Controller
     public function index()
     {
         $threads = $this->thread_service->getThreads(3);
+        $threads->load('messages.user', 'messages.images');
         return view('threads.index', compact('threads'));
     }
 
@@ -94,7 +95,7 @@ class ThreadController extends Controller
     public function show($id)
     {
         $thread = $this->thread_repository->findById($id);
-        $thread->load('messages.user');
+        $thread->load('messages.user', 'messages.images');
         return view('threads.show', compact('thread'));
     }
 

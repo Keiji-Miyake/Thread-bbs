@@ -3,8 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\MessageRequest;
+use App\Services\ImageService;
 use App\Services\MessageService;
-use App\Thread;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -19,15 +19,24 @@ class MessageController extends Controller
     protected $message_service;
 
     /**
+     * The ImageService implementation.
+     *
+     * @var ImageService
+     */
+    protected $image_service;
+
+    /**
      * Create a new controller instance
      *
      * @param MessageService $message_service
      */
     public function __construct(
-        MessageService $message_service
+        MessageService $message_service,
+        ImageService $image_service
     ) {
         $this->middleware('auth');
         $this->message_service = $message_service;
+        $this->image_service = $image_service;
     }
 
     /**
@@ -61,7 +70,12 @@ class MessageController extends Controller
         try {
             $data = $request->validated(); // バリデーションした値を変数へ格納。
             $data['user_id'] = Auth::id(); // ログイン中のユーザIDを$dataに追加
-            $this->message_service->createNewMessage($data, $id);
+            $message = $this->message_service->createNewMessage($data, $id);
+
+            $images = $request->file('images'); // 投稿された画像を $images に代入
+            if ($images) {
+                $this->image_service->createNewImages($images, $message->id);
+            }
         } catch (Exception $error) {
             return redirect()->route('threads.show', $id)->with('error', 'メッセージの投稿ができませんでした。');
         }
