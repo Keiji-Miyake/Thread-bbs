@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\ThreadRequest;
 use App\Message;
+use App\Repositories\ThreadRepository;
 use App\Services\ThreadService;
 use App\Thread;
 use Carbon\Carbon;
@@ -19,17 +20,27 @@ class ThreadController extends Controller
     protected $thread_service;
 
     /**
+     * The ThreadRepository implementation
+     *
+     * @var ThreadRepository
+     */
+    protected $thread_repository;
+
+    /**
      * Create a new controller instance.
      *
      * @param ThreadService $thread_service
+     * @param ThreadRepository $thread_repository
      * @return void
      */
     public function __construct(
-        ThreadService $thread_service // インジェクション
+        ThreadService $thread_service, // インジェクション
+        ThreadRepository $thread_repository
     )
     {
         $this->middleware('auth')->except('index'); //ログインしているユーザがstoreメソッドにアクセスできるように
         $this->thread_service = $thread_service; // プロパティに代入
+        $this->thread_repository = $thread_repository;
     }
 
     /**
@@ -82,7 +93,9 @@ class ThreadController extends Controller
      */
     public function show($id)
     {
-        //
+        $thread = $this->thread_repository->findById($id);
+        $thread->load('messages.user');
+        return view('threads.show', compact('thread'));
     }
 
     /**
