@@ -1,0 +1,26 @@
+body {
+    background-color: $body-base-color;
+}
+
+.btn-primary {
+    background-color: $blue;
+}
+
+.btn-danger {
+    background-color: $white;
+    color: $red;
+}
+
+.badge-primary {
+    background-color: $blue;
+    border-radius: 1rem;
+}
+
+.card-header {
+    background-color: $white;
+    border: none;
+}
+
+.card-footer {
+    background-color: $white;
+}
