@@ -33,14 +33,22 @@
                                         @endforeach
                                     @endif
                                 </div>
+                                @include('components.message-delete', compact('thread', 'message'))
                             </div>
                         @endforeach
                         <div class="card-footer">
                             @include('components.message-create', compact('thread'))
+                            @if (Auth::guard('admin')->check())
+                            <a href="{{ route('admin.threads.show', $thread->id) }}">全部読む</a>
+                            <a href="{{ route('admin.threads.show', $thread->id) }}">最新50</a>
+                            <a href="{{ route('admin.threads.show', $thread->id) }}">1-100</a>
+                            <a href="{{ route('admin.threads.index') }}">リロード</a>
+                            @else
                             <a href="{{ route('threads.show', $thread->id) }}">全部読む</a>
                             <a href="{{ route('threads.show', $thread->id) }}">最新50</a>
                             <a href="{{ route('threads.show', $thread->id) }}">1-100</a>
                             <a href="{{ route('threads.index') }}">リロード</a>
+                            @endif
                         </div>
                     </div>
                 </div>
@@ -60,8 +68,7 @@
                             </div>
                             <div class="form-group">
                                 <label for="thread-first-content">内容</label>
-                                <textarea name="content" class="form-control" id="thread-first-content" rows="3"
-                                    required></textarea>
+                                <textarea name="content" class="form-control" id="thread-first-content" rows="3" required></textarea>
                             </div>
                             <button type="submit" class="btn btn-primary">スレッド作成</button>
                         </form>

@@ -20,7 +20,7 @@ class CreateMessagesTable extends Migration
             $table->text('body');
             $table->timestamps();
 
-            $table->foreign('thread_id')->references('id')->on('threads');
+            $table->foreign('thread_id')->references('id')->on('threads')->onDelete('cascade');
             $table->foreign('user_id')->references('id')->on('users');
         });
     }
