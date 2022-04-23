@@ -56,6 +56,8 @@ return [
 
     'asset_url' => env('ASSET_URL', null),
 
+    'slack_url' => env('SLACK_URL'),
+
     /*
     |--------------------------------------------------------------------------
     | Application Timezone
@@ -227,5 +229,4 @@ return [
         'View' => Illuminate\Support\Facades\View::class,
 
     ],
-
 ];

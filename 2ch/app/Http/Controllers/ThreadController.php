@@ -2,15 +2,14 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\ThreadRequest;
-use App\Message;
-use App\Repositories\ThreadRepository;
-use App\Services\ThreadService;
-use App\Thread;
-use Carbon\Carbon;
 use Exception;
 use Illuminate\Http\Request;
+use App\Services\ThreadService;
+use App\Http\Requests\ThreadRequest;
+use App\Repositories\ThreadRepository;
 use Illuminate\Support\Facades\Auth;
+
+use App\Services\SlackNotificationService;
 
 class ThreadController extends Controller
 {
@@ -27,6 +26,13 @@ class ThreadController extends Controller
     protected $thread_repository;
 
     /**
+     * The SlackNotificationService implementation.
+     *
+     * @var SlackNotificationService
+     */
+    protected $slack_notification_service;
+
+    /**
      * Create a new controller instance.
      *
      * @param ThreadService $thread_service
@@ -35,12 +41,14 @@ class ThreadController extends Controller
      */
     public function __construct(
         ThreadService $thread_service, // インジェクション
-        ThreadRepository $thread_repository
+        ThreadRepository $thread_repository,
+        SlackNotificationService $slack_notification_service
     )
     {
         $this->middleware('auth')->except('index'); //ログインしているユーザがstoreメソッドにアクセスできるように
         $this->thread_service = $thread_service; // プロパティに代入
         $this->thread_repository = $thread_repository;
+        $this->slack_notification_service = $slack_notification_service;
     }
 
     /**
@@ -78,6 +86,7 @@ class ThreadController extends Controller
                 ['name', 'content']
             );
             $this->thread_service->createNewThread($data, Auth::id()); // new せず $this-> の形で呼び出せる。（インジェクションした為）
+            $this->slack_notification_service->send(Auth::user()->name . ' が ' . $request->name . 'を立てました！');
         } catch (Exception $error) {
             return redirect()->route('threads.index')->with('error', 'スレッドの新規作成に失敗しました。');
         }
