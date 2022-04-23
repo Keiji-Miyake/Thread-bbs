@@ -1,5 +1,8 @@
 # スレッド掲示板
 
+- 参考
+  - @t-aburasoba <https://aburasoba.org/category/programming/laravel/>
+
 - laravel 6
 - laradock
   - mysql 8
