@@ -15,6 +15,9 @@ Route::get('/', function () {
     return redirect('login');
 });
 
+Auth::routes();
+
+
 Route::middleware(['auth'])->group(function () {
     Route::get('/', function () {
         return redirect('home');
@@ -27,9 +30,9 @@ Route::middleware(['auth:admin'])->group(function () {
     });
 });
 
-Auth::routes();
 
 Route::get('/home', 'HomeController@index')->name('home');
+Route::resource('listings', 'ListingController');
 Route::resource('/threads', 'ThreadController')->except(['create', 'update']);
 Route::resource('/threads/{thread}/messages', 'MessageController')->except(['create', 'update']);
 
