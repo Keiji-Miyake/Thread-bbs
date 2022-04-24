@@ -21,6 +21,12 @@ Route::middleware(['auth'])->group(function () {
     });
 });
 
+Route::middleware(['auth:admin'])->group(function () {
+    Route::get('/', function () {
+        return redirect('admin/home');
+    });
+});
+
 Auth::routes();
 
 Route::get('/home', 'HomeController@index')->name('home');
