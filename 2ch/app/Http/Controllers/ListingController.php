@@ -2,7 +2,13 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\ListingRequest;
+use App\Models\Listing;
+use Exception;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 
 class ListingController extends Controller
 {
@@ -13,7 +19,9 @@ class ListingController extends Controller
      */
     public function index()
     {
-        //
+        $listings = Auth::user()->listings;
+
+        return view('listings.index', compact('listings'));
     }
 
     /**
@@ -23,7 +31,7 @@ class ListingController extends Controller
      */
     public function create()
     {
-        //
+        return view('listings.create');
     }
 
     /**
@@ -32,9 +40,23 @@ class ListingController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(ListingRequest $request)
     {
-        //
+        DB::beginTransaction();
+        try {
+            $data = $request->validated();
+            $data['user_id'] = Auth::id();
+
+            $listing = new Listing();
+            $listing->create($data);
+        } catch (Exception $error) {
+            DB::rollBack();
+            Log::error($error->getMessage());
+            return redirect()->back()->with('error', 'メッセージの投稿ができませんでした。');
+        }
+        DB::commit();
+
+        return redirect()->route('listings.index')->with('success', 'Listing created successfully');
     }
 
     /**
@@ -56,7 +78,8 @@ class ListingController extends Controller
      */
     public function edit($id)
     {
-        //
+        $listing = Listing::find($id);
+        return view('listings.edit', compact('listing'));
     }
 
     /**
@@ -66,9 +89,23 @@ class ListingController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update(ListingRequest $request, $id)
     {
-        //
+        DB::beginTransaction();
+        try {
+            $data = $request->validated();
+            $data['user_id'] = Auth::id();
+
+            $listing = Listing::find($id);
+            $listing->update($data);
+        } catch (Exception $error) {
+            DB::rollBack();
+            Log::error($error->getMessage());
+            return redirect()->back()->with('error', 'メッセージの投稿ができませんでした。');
+        }
+        DB::commit();
+
+        return redirect()->route('listings.index')->with('success', 'Listing created successfully');
     }
 
     /**
@@ -79,6 +116,9 @@ class ListingController extends Controller
      */
     public function destroy($id)
     {
-        //
+        $listing = Listing::find($id);
+        $listing->delete();
+
+        return redirect()->route('listings.index')->with('success', "{$listing->name} を削除しました。");
     }
 }

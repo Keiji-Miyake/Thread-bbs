@@ -11,27 +11,10 @@
 |
 */
 
-Route::get('/', function () {
-    return redirect('login');
-});
+Route::get('/', 'HomeController@index')->name('home');
 
 Auth::routes();
 
-
-Route::middleware(['auth'])->group(function () {
-    Route::get('/', function () {
-        return redirect('home');
-    });
-});
-
-Route::middleware(['auth:admin'])->group(function () {
-    Route::get('/', function () {
-        return redirect('admin/home');
-    });
-});
-
-
-Route::get('/home', 'HomeController@index')->name('home');
 Route::resource('listings', 'ListingController');
 Route::resource('/threads', 'ThreadController')->except(['create', 'update']);
 Route::resource('/threads/{thread}/messages', 'MessageController')->except(['create', 'update']);
@@ -42,8 +25,8 @@ Route::prefix('admin')->group(function () {
 });
 
 Route::prefix('admin')->middleware(['auth:admin'])->as('admin.')->group(function () {
-    Route::post('logout', 'Admin\LoginController@logout')->name('admin.logout');
     Route::get('home', 'Admin\HomeController@index')->name('admin.home');
+    Route::post('logout', 'Admin\LoginController@logout')->name('admin.logout');
     Route::resource('threads', 'Admin\ThreadController')->except(['create', 'store', 'update']);
     Route::resource('threads/{thread}/messages', 'Admin\MessageController')->only(['destroy']);
 });

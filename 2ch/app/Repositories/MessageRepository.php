@@ -2,7 +2,7 @@
 
 namespace App\Repositories;
 
-use App\Message;
+use App\Models\Message;
 
 class MessageRepository
 {

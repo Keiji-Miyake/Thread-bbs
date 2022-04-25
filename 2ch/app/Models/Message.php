@@ -1,17 +1,18 @@
 <?php
 
-namespace App;
+namespace App\Models;
 
+use App\User;
 use Illuminate\Database\Eloquent\Model;
 
-class Thread extends Model
+class Message extends Model
 {
     /**
      * The table associated with the model.
      *
      * @var string
      */
-    protected $table = 'threads';
+    protected $table = 'messages';
 
     /**
      * The attributes that are mass assignable.
@@ -19,16 +20,16 @@ class Thread extends Model
      * @var array
      */
     protected $fillable = [
-        'name', 'user_id', 'is_user_checked', 'latest_comment_time',
+        'thread_id', 'user_id', 'body',
     ];
 
     public function user()
     {
-        return $this->belongsTo('App\User');
+        return $this->belongsTo(User::class);
     }
 
-    public function messages()
+    public function images()
     {
-        return $this->hasMany('App\Message');
+        return $this->hasMany(Image::class);
     }
 }

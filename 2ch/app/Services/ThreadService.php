@@ -2,10 +2,9 @@
 
 namespace App\Services;
 
-use App\Message;
 use App\Repositories\MessageRepository;
 use App\Repositories\ThreadRepository;
-use App\Thread;
+use App\Models\Thread;
 use Carbon\Carbon;
 use Exception;
 use Illuminate\Support\Facades\DB;

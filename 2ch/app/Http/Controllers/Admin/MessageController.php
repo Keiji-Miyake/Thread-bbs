@@ -4,7 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Repositories\MessageRepository;
-use App\Thread;
+use App\Models\Thread;
 use Exception;
 use Illuminate\Http\Request;
 

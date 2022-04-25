@@ -2,7 +2,7 @@
 
 namespace App\Repositories;
 
-use App\Thread;
+use App\Models\Thread;
 use Carbon\Carbon;
 
 class ThreadRepository
