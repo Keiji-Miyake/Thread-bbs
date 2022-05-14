@@ -12,10 +12,13 @@
 
 ```Bash
 cd laradock
+cp .env.example .env
 docker-compose up -d nginx mysql phpmyadmin minio
 docker-compose exec workspace bash
-
 chown -R laradock:laradock /var/www
+composer install
+npm install
+npm run dev
 ```
 
 ## minio
